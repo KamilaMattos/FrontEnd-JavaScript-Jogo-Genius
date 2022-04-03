@@ -1,0 +1,122 @@
+body {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    margin: 0;
+}
+
+main {
+    box-sizing: border-box;
+    height: 100vh;
+    padding: 10px;
+    width: 100vw;
+}
+
+h1{
+    text-align: center;
+}
+.center {
+    align-items: center;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.container {
+    height: 100vh;
+    width: 100vw;
+}
+
+.game {
+    align-items: center;
+    background-color: #282e3a;
+    border-radius: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    height: 30vw;
+    justify-content: space-around;
+    margin: auto;
+    padding: 1.5%;
+    position: relative;
+    width: 30vw;
+}
+
+.clicaveis {
+    height: 45%;
+    opacity: 0.25;
+    transition: 0.75s;
+    width: 45%;
+}
+
+.top-left.round-corner {
+    border-radius: 100% 5px 5px;
+}
+
+.top-right.round-corner {
+    border-radius: 5px 100% 5px 5px;
+}
+
+.bottom-left.round-corner {
+    border-radius: 5px 5px 5px 100%;
+}
+
+.bottom-right.round-corner {
+    border-radius: 5px 5px 100% 5px;
+}
+
+.area-container {
+    height: 100%;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+}
+
+.area-centro {
+    background-color: #282e3a;
+    border-radius: 100px;
+    cursor: pointer;
+    height: 25%;
+    margin: 10px 0;
+    position: relative;
+    width: 25%;
+}
+
+.area-centro .background {
+    background-color: green;
+    border-radius: 100px;
+    box-sizing: border-box;
+    height: 95%;
+    pointer-events: initial;
+    position: absolute;
+    width: 95%;
+}
+
+.area-centro p {
+    pointer-events: none;
+    position: relative;
+    text-align: center;
+}
+
+.hover {
+    opacity: 0.5;
+}
+
+.active {
+    opacity: 1;
+}
+
+#red {
+    background-color: red;
+}
+
+#yellow {
+    background-color: yellow;
+}
+
+#green {
+    background-color: green;
+}
+
+#blue {
+    background-color: blue;
+}

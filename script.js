@@ -1,92 +1,195 @@
-let arrCores = ["verde", "amarelo", "vermelho", "azul"];
-let ordemCores = []; // guarda a sequencia de cores clicadas
-let ordemDosCliques = []; // guarda a sequencia dos cliques
+const main = document.getElementById('main')
+const h1 = document.createElement('h1')
+h1.innerText= 'Genius'
+
+const sectionGame = document.getElementById('game')
+sectionGame.innerHTML= `
+<div class="clicaveis top-left round-corner" id="yellow"></div>
+<div class="clicaveis top-right round-corner" id="blue"></div>
+
+<div class="clicaveis bottom-left round-corner" id="red"></div>
+<div class="clicaveis bottom-right round-corner" id="green"></div>
+
+<div class="area-container center">
+    <div class="area-centro center">
+        <div class="background">
+
+        </div>
+        <p>
+            COMEÇAR
+        </p>
+    </div>
+</div>  
+`
+main.appendChild(h1)
+main.appendChild(sectionGame)
+
+const colorButtons = document.querySelectorAll('.clicaveis');
+const centerElement = document.querySelector('.area-centro .background');
+const controlStatus = document.querySelector('.area-centro p');
+const scoreElement = document.querySelector('.score');
+const container = document.querySelector('.container');
 
 
-function selecionaEescutaBotoes(){
-    botaoVerde = document.getElementById('verde');
-    botaoVerde.addEventListener('click',()=>{} ); //aqui vai a função testaCor//
+let sequenciaRandom = [];
+let sequenciaJogador = [];
+let nivelDificuldade = 4;
+let intervaloContagem = 0;
+let pontuacao = 0;
 
-    botaoAmarelo = document.getElementById('amarelo');
-    botaoAmarelo.addEventListener('click',()=>{} );//aqui vai a função testaCor//
+let esperarResposta = false;
+let iniciarRodada = true;
 
-    botaoVermelho = document.getElementById('vermelho');
-    botaoVermelho.addEventListener('click',()=>{} ); //aqui vai a função testaCor//
+const numeroRandomArr = (array) => {
+    return array[Math.floor(Math.random() * array.length)];
+};
 
-    botaoAzul = document.getElementById('azul');
-    botaoAzul.addEventListener('click', ()=>{} ); //aqui vai a função testaCor//
+const mostrarSequencia = (index) => {
+    const element = sequenciaRandom[index];
 
-    botaoJogar = document.getElementById('jogar-novamente');
-    botaoJogar.addEventListener('click', jogadas);
-}
+    setTimeout(() => {
+        element.classList.add('active');
 
-function criarBotoesJogo(){
-    
-    let tabuleiroJogo = document.getElementById('jogo');
-    tabuleiroJogo.innerHTML = `
-    <div id="verde" class="botao"></div>
-    <div id="amarelo" class="botao"></div>
-    <div id="vermelho"class="botao"></div>
-    <div id="azul" class="botao"></div>
-    <div><button id="jogar-novamente">Jogar novamente</button></div>
-       
-    `
-    selecionaEescutaBotoes();
-}
-criarBotoesJogo();
+        setTimeout(() => {
+            element.classList.remove('active');
+            index++;
 
-function colorRandom(){ // gera um número aleatório entre 0 e 4 que será o índice correspondente a cada cor
-    let random = Math.floor(Math.random() * 4);
-    
-    let corAtual = arrCores[random];
-    ordemDosCliques.push(corAtual);
-    console.log(corAtual);
-    
-    console.log(random);
-}
+            if (index < sequenciaRandom.length) {
+                mostrarSequencia(index);
+            } else {
+                esperarResposta = true;
 
-function jogadas(){ //chama a colorRandom e itera pelos cliques mudando a cor conforme os cliques
-    colorRandom();
-    console.log('funcao jogada')
-    
-       
-    for(let i = 0; i < ordemDosCliques.length; i++){
-        mudaCor(ordemDosCliques[i]);
-        console.log("mudaCor")
+                centerElement.style.backgroundColor = 'lightblue';
+                controlStatus.innerHTML = 'REPRODUZA';
+
+                mudaEstiloCursor();
+            }
+        }, 1000 - intervaloContagem)
+    }, 1000 - intervaloContagem)
+};
+
+const novaRodada = () => {
+    sequenciaJogador = [];
+
+    centerElement.style.cursor = 'auto';
+    centerElement.style.backgroundColor = 'yellow';
+    controlStatus.innerHTML = 'OBSERVE';
+
+    const limiteDoLoop = nivelDificuldade - sequenciaRandom.length;
+
+    for (let i = 0; i < limiteDoLoop; i++) {
+        const valorRandom = numeroRandomArr(colorButtons);
+
+        sequenciaRandom.push(valorRandom);
+    }
+
+    mostrarSequencia(0);
+};
+
+const mudaEstiloCursor = () => {
+    for (let element of colorButtons) {
+        element.style.cursor = element.style.cursor === 'pointer' ? '' : 'pointer';
+    }
+};
+
+const aumentarDificuldade = (aumentar) => {
+    if (aumentar) {
+        nivelDificuldade++;
+        intervaloAumento = (intervaloAumento < 800) ? intervaloAumento + 10 : intervaloAumento;
+    } else {
+        nivelDificuldade = 4;
+        intervaloAumento = 0;
+    }
+};
+
+
+const atualizaPontos = () => {
+    scoreElement.innerHTML = pontuacao;
+};
+
+const processarRespostas = () => {
+    esperarResposta = false;
+
+    mudaEstiloCursor();
+
+    let acertou = true;
+
+    for (let i in sequenciaRandom) {
+        const respostaCerta = sequenciaRandom[i];
+        const respostaJogador = sequenciaJogador[i];
+
+        if (respostaCerta !== respostaJogador) {
+            acertou = false;
+        }
+    }
+
+    if (acertou) {
+        centerElement.style.cursor = 'pointer';
+        centerElement.style.backgroundColor = 'green';
+
+        controlStatus.innerHTML = 'ACERTOU';
+
+        setTimeout(() => {
+            novaRodada()
+        }, 1500);
+    } else {
+        centerElement.style.cursor = 'pointer';
+        centerElement.style.backgroundColor = 'red';
+
+        controlStatus.innerHTML = 'RECOMEÇAR';
+        
+        iniciarRodada = true;
+    }
+
+    pontuacao = (acertou) ? pontuacao + 1 : pontuacao;
+    pontuacao = (acertou) ? pontuacao : 0;
+
+    atualizaPontos();
+    aumentarDificuldade(acertou);
+   
+};
+
+const clique = (element) => {
+    if (!esperarResposta) {
+        return;
+    }
+
+    sequenciaJogador.push(element);
+    element.classList.add('active');
+
+    setTimeout(() => {
+        element.classList.remove('active');
+    }, 750);
+
+    const i = sequenciaJogador.length - 1;
+
+    if (sequenciaJogador[i] !== sequenciaRandom[i] || sequenciaJogador.length === sequenciaRandom.length) {
+        processarRespostas();
+    }
+};
+
+centerElement.onclick = () => {
+    if (iniciarRodada) {
+        novaRodada();
+
+        iniciarRodada = false;
+    }
+};
+
+for (let element of colorButtons) {
+    element.onclick = () => {
+        clique(element);
+    };
+
+    element.onmouseenter = () => {
+        if (esperarResposta && !element.classList.contains('active')) {
+            element.classList.add('hover');
+        }
+    };
+
+    element.onmouseleave = () => {
+        if (esperarResposta && !element.classList.contains('active')) {
+            element.classList.remove('hover');
+        }
     }
 }
-
-function mudaCor(cor){ // verifica qual cor clicada e muda a cor conforme o clique e tempo de intervalo
-    if(cor == 'verde'){
-        botaoVerde.classList.add('muda-cor');
-        setTimeout( () => (botaoVerde.classList.remove('muda-cor')), 3000);
-        console.log('mudei de cor verde');
-    }
-    if(cor == 'amarelo'){
-        botaoAmarelo.classList.add('muda-cor');
-        setTimeout( () => (botaoAmarelo.classList.remove('muda-cor')), 3000);
-        console.log('mudei de cor amarelo');
-    }
-    if(cor == 'vermelho'){
-        botaoVermelho.classList.add('muda-cor');
-        setTimeout( () => (botaoVermelho.classList.remove('muda-cor')), 3000);
-        console.log('mudei de cor vermelho');
-    }
-    if(cor == 'azul'){
-        botaoAzul.classList.add('muda-cor');
-        setTimeout( () => (botaoAzul.classList.remove('muda-cor')), 3000)
-        console.log('mudei de cor azul');
-    }
-
-}
-
-// function testaCor(){   ESTOU TERMINANDO ESSA AGORA
-//     let corEscolhida = event.target.id;
-//     mudaCor(corEscolhida);
-
-//     ordemCores.push(`${corEscolhida}`);
-
-//     if(ordemCores.length === ordemDosCliques.length){
-
-//     }
-// }
